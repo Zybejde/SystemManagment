@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center text-primary mb-4">Sales & Overview Report</h2>
+
+        <div class="row">
+            <% if (salesData) { %>
+                <!-- Total Orders Card -->
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header text-center bg-primary text-white">
+                            Total Orders
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-primary"><%= salesData.total_orders %></h5>
+                        </div>
+                        <div class="card-footer text-center bg-light">
+                            <small>Orders placed</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Users Card -->
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header text-center bg-primary text-white">
+                            Total Users
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-primary"><%= salesData.total_users %></h5>
+                        </div>
+                        <div class="card-footer text-center bg-light">
+                            <small>Registered users</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Suppliers Card -->
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header text-center bg-primary text-white">
+                            Total Suppliers
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-primary"><%= salesData.total_suppliers %></h5>
+                        </div>
+                        <div class="card-footer text-center bg-light">
+                            <small>Active suppliers</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Products Card -->
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header text-center bg-primary text-white">
+                            Total Products
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-primary"><%= salesData.total_products %></h5>
+                        </div>
+                        <div class="card-footer text-center bg-light">
+                            <small>Products available</small>
+                        </div>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="col-12">
+                    <div class="alert alert-warning text-center">
+                        <strong>No data available for the selected report.</strong>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

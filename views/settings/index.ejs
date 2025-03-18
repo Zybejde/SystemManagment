@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <!-- Bootstrap styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Importing CSS -->
+</head>
+<body>
+    <!-- Settings container -->
+    <div class="container mt-5">
+        <h2>Settings</h2><br>
+        <!-- Settings form -->
+        <form action="/settings/update-email" method="POST">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Email</button>
+        </form>
+        
+        <hr>
+        
+        <form action="/settings/update-name" method="POST">
+            <div class="mb-3">
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Name</button>
+        </form>
+        
+        <hr>
+        
+        <form action="/settings/change-password" method="POST">
+            <div class="mb-3">
+                <label for="new-password" class="form-label">New Password</label>
+                <input type="password" class="form-control" id="new-password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Change Password</button>
+        </form>
+        
+        <hr>
+        
+        <form action="/settings/upload-profile-pic" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="profile-pic" class="form-label">Upload Profile Picture</label>
+                <input type="file" class="form-control" id="profile-pic" name="profile_pic" accept="image/*">
+            </div>
+            <button type="submit" class="btn btn-primary">Upload Picture</button>
+        </form>
+        
+        <hr>
+        
+        <form action="/settings/enable-2fa" method="POST">
+            <button type="submit" class="btn btn-success">Enable Two-Factor Authentication</button>
+        </form>
+        
+        <!-- Add other settings as necessary -->
+</div>
+
+</body>
+</html>

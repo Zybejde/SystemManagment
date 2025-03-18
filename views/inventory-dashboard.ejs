@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Dashboard</title>
+     <!-- Bootstrap styles -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+     <!-- Importing CSS -->
+     <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body class="d-flex flex-column" style="min-height: 100vh;"> 
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-primary">
+        <div class="container-fluid d-flex justify-content-between w-100 p-3">
+            <a class="navbar-brand text-white ps-2 pe-2" href="#">Inventory Dashboard</a>
+            <a href="/logout" class="btn btn-success ms-auto text-white" role="button">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Main Content and Sidebar -->
+    <div class="d-flex flex-grow-1">
+        <div class="d-flex flex-column flex-shrink-0 bg-dark text-white p-4" style="width: 300px; height: 100vh;">
+            <!-- Products dropdown -->
+            <div class="dropdown mb-4">
+                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="productsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Products
+                </a>
+                <ul class="dropdown-menu bg-dark" aria-labelledby="productsDropdown">
+                    <li><a class="dropdown-item text-white" href="/inventory/products">View Products</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/products/add">Add Product</a></li>
+                </ul>
+            </div>
+
+            <!-- Orders dropdown -->
+            <div class="dropdown mb-4">
+                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="ordersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Orders
+                </a>
+                <ul class="dropdown-menu bg-dark" aria-labelledby="ordersDropdown">
+                    <li><a class="dropdown-item text-white" href="/inventory/orders">View Orders</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/orders/add">Add Order</a></li>
+                </ul>
+            </div>
+
+            <!-- Suppliers Dropdown -->
+            <div class="dropdown mb-4">
+                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="suppliersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Suppliers
+                </a>
+                <ul class="dropdown-menu bg-dark" aria-labelledby="suppliersDropdown">
+                    <li><a class="dropdown-item text-white" href="/inventory/suppliers">View Suppliers</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/suppliers/add">Add Supplier</a></li>
+                </ul>
+            </div>
+
+            <!-- Settings Link -->
+            <a href="/inventory/settings" class="nav-link text-white fs-4 mb-4">Settings</a>
+
+            <!-- Reports Link -->
+            <a href="/inventory/reports" class="nav-link text-white fs-4 mb-4">Reports</a>
+
+            <!-- Profile Link -->
+            <a href="/inventory/profile" class="nav-link text-white fs-4 mb-4">Profile</a>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-grow-1 p-5">
+            <h2>Welcome to the Inventory Dashboard</h2>
+            <p>Select an option from the sidebar to manage inventory.</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
