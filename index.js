@@ -9,13 +9,14 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const db = require("./db"); // MySQL Database Connection
 const inventoryRoutes = require("./routes/inventoryRoutes");
 const authMiddleware = require("./src/middleware/authMiddleware");
+const { name } = require("ejs");
 
 const app = express();
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); 
-app.use(express.static("public")); // To serve static files (CSS, JS, images)
+app.use(express.static('public')); // To serve static files (CSS, JS, images)
 
 // Express Session
 app.use(session({
@@ -52,7 +53,7 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: "/auth/google/callback",
+            callbackURL: "http://localhost:3000/auth/google/callback",
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
@@ -99,7 +100,11 @@ app.get("/signup", (req, res) => {
 
 // Handle signup form submission
 app.post("/signup", async (req, res) => {
+<<<<<<< HEAD
     const { name, email, password } = req.body; // Change from fullname to name
+=======
+    const { name, email, password } = req.body;
+>>>>>>> 0054871 (Login page styles)
 
     try {
         // Check if the user already exists
@@ -109,12 +114,20 @@ app.post("/signup", async (req, res) => {
         // Hash password and store user
         const hashedPassword = await bcrypt.hash(password, 10);
         const [result] = await db.query(
+<<<<<<< HEAD
             "INSERT INTO users (name, email, password) VALUES (?, ?, ?)", // Change fullname to name
+=======
+            "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+>>>>>>> 0054871 (Login page styles)
             [name, email, hashedPassword]
         );
 
         // Log the user in immediately after signup
+<<<<<<< HEAD
         req.login({ id: result.insertId, name, email }, (err) => { // Change fullname to name
+=======
+        req.login({ id: result.insertId, name, email }, (err) => {
+>>>>>>> 0054871 (Login page styles)
             if (err) return res.status(500).send("Login failed after signup.");
             res.redirect("/dashboard");
         });

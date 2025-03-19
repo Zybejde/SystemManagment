@@ -1,0 +1,30 @@
+.background-img {
+    background-image: url('/public/image/inv2.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.logo-container{
+    display: flex;
+    align-items: center; /* Vendos imazhin dhe tekstin në të njëjtën vijë */
+    justify-content: center; /* Qendroni të dy elementët */
+    background-color: rgb(252, 252, 252); /* Sfond i bardhë */
+    padding: 10px; /* Hapësirë rreth elementeve */
+}
+
+.logo {
+    background-color: red;
+    width: 50px; /* Vendos një madhësi më të vogël për logon */
+    height: auto; /* Ruaj raportin e aspektit */
+    filter: invert(1);  /*Bën imazhin të duket i zi në sfond të bardhë */
+    margin-right: 10px; /* Hapësirë mes logos dhe titullit */
+}
+
+h3{
+    color: black;
+    font-family: Arial, sans-serif; /* Ndryshon fontin */
+    font-weight: bold; /* E bën tekstin më të trashë */
+    font-size: 35px; /* Madhësia e tekstit */
+    text-shadow:  2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
