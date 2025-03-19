@@ -213,8 +213,12 @@ router.post("/orders/delete/:id", authMiddleware, async (req, res) => {
 
 // Route to render Add Supplier page
 router.get("/suppliers/add", authMiddleware, (req, res) => {
-    res.render("suppliers/add");
+    res.render("suppliers/add", { 
+        successMessage: req.flash("success")[0], 
+        errorMessage: req.flash("error")[0] 
+    });
 });
+
 
 //Add new supplier
 router.post("/suppliers/add", authMiddleware, async (req, res) => {
@@ -244,11 +248,17 @@ router.post("/suppliers/add", authMiddleware, async (req, res) => {
 
 
 
+
+
 // Route to view all suppliers
 router.get("/suppliers", authMiddleware, async (req, res) => {
     try {
         const [suppliers] = await db.query("SELECT * FROM suppliers");
-        res.render("suppliers/index", { suppliers });
+        res.render("suppliers/index", { 
+            suppliers, 
+            successMessage: req.flash("success")[0], 
+            errorMessage: req.flash("error")[0] 
+        });
     } catch (error) {
         console.error("Error fetching suppliers:", error);
         req.flash("error", "Something went wrong!");
@@ -257,18 +267,87 @@ router.get("/suppliers", authMiddleware, async (req, res) => {
 });
 
 
+
 // Delete a supplier
 router.post("/suppliers/delete/:id", authMiddleware, async (req, res) => {
     try {
-        const { id } = req.params;
-        await db.query("DELETE FROM suppliers WHERE id = ?", [id]);
+        const supplierId = req.params.id;
+
+        // Delete the supplier from the database
+        await db.query("DELETE FROM suppliers WHERE id = ?", [supplierId]);
+
+        // Redirect back to the suppliers page with a success message
         req.flash("success", "Supplier deleted successfully!");
+        res.redirect("/inventory/suppliers");
     } catch (error) {
         console.error("Error deleting supplier:", error);
-        req.flash("error", "Failed to delete supplier.");
+        req.flash("error", "Something went wrong!");
+        res.redirect("/inventory/suppliers");
     }
-    res.redirect("/inventory/suppliers");
 });
+
+
+
+
+//Update supplier
+// Route to edit supplier
+router.get("/suppliers/edit/:id", authMiddleware, async (req, res) => {
+    const { id } = req.params;
+    
+    try {
+        const [rows] = await db.query("SELECT * FROM suppliers WHERE id = ?", [id]);
+
+        if (rows.length === 0) {
+            req.flash("error", "Supplier not found.");
+            return res.redirect("/suppliers");
+        }
+
+        // Render the edit page with supplier data and flash messages
+        res.render("suppliers/edit", { 
+            supplier: rows[0],  
+            successMessage: req.flash("success")[0], 
+            errorMessage: req.flash("error")[0] 
+        });
+    } catch (error) {
+        console.error("Error fetching supplier:", error);
+        req.flash("error", "Something went wrong!");
+        res.redirect("/suppliers");
+    }
+});
+
+
+
+
+// Handle supplier update
+// Handle supplier update
+router.post("/suppliers/edit/:id", authMiddleware, async (req, res) => {
+    const { id } = req.params;
+    const { name, contact, email, address } = req.body;
+
+    try {
+        // Ensure all fields are filled
+        if (!name || !contact || !email || !address) {
+            req.flash("error", "All fields are required.");
+            return res.redirect(`/inventory/suppliers/edit/${id}`);
+        }
+
+        // Update the supplier in the database
+        await db.query(
+            "UPDATE suppliers SET name = ?, contact = ?, email = ?, address = ? WHERE id = ?",
+            [name, contact, email, address, id]
+        );
+
+        req.flash("success", "Supplier updated successfully!");
+        res.redirect("/inventory/suppliers");  // Redirect to supplier list
+    } catch (error) {
+        console.error("Error updating supplier:", error);
+        req.flash("error", "Something went wrong!");
+        res.redirect(`/inventory/suppliers/edit/${id}`);  // Stay on the edit page if error
+    }
+});
+
+
+
 
 
 // Route for settings page
