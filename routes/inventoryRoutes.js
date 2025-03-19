@@ -133,11 +133,13 @@ router.get("/orders", authMiddleware, async (req, res) => {
             JOIN products ON orders.product_id = products.id
         `);
         
-        
-
-        res.render("orders/index", { orders }); // Render the view with the fetched orders
+        res.render("orders/index", { 
+            orders, 
+            successMessage: req.flash("success")[0], 
+            errorMessage: req.flash("error")[0] 
+        }); // Pass flash messages to the view
     } catch (error) {
-        console.error("Error fetching orders:", error); // Log the error for debugging
+        console.error("Error fetching orders:", error);
         res.status(500).send("Error fetching orders");
     }
 });

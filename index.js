@@ -60,10 +60,10 @@ passport.use(
 
                 if (rows.length === 0) {
                     const [result] = await db.query(
-                        "INSERT INTO users (fullname, email, google_id) VALUES (?, ?, ?)",
+                        "INSERT INTO users (name, email, google_id) VALUES (?, ?, ?)",
                         [profile.displayName, profile.emails[0].value, profile.id]
                     );
-                    const newUser = { id: result.insertId, fullname: profile.displayName, email: profile.emails[0].value, google_id: profile.id };
+                    const newUser = { id: result.insertId, name: profile.displayName, email: profile.emails[0].value, google_id: profile.id };
                     return done(null, newUser);
                 } else {
                     return done(null, rows[0]);
@@ -80,11 +80,12 @@ passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser(async (id, done) => {
     try {
         const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [id]);
-        done(null, rows[0]);
+        done(null, rows[0]); // This should now correctly return user data
     } catch (error) {
         done(error);
     }
 });
+
 
 // Routes
 
@@ -98,7 +99,7 @@ app.get("/signup", (req, res) => {
 
 // Handle signup form submission
 app.post("/signup", async (req, res) => {
-    const { fullname, email, password } = req.body;
+    const { name, email, password } = req.body; // Change from fullname to name
 
     try {
         // Check if the user already exists
@@ -108,12 +109,12 @@ app.post("/signup", async (req, res) => {
         // Hash password and store user
         const hashedPassword = await bcrypt.hash(password, 10);
         const [result] = await db.query(
-            "INSERT INTO users (fullname, email, password) VALUES (?, ?, ?)",
-            [fullname, email, hashedPassword]
+            "INSERT INTO users (name, email, password) VALUES (?, ?, ?)", // Change fullname to name
+            [name, email, hashedPassword]
         );
 
         // Log the user in immediately after signup
-        req.login({ id: result.insertId, fullname, email }, (err) => {
+        req.login({ id: result.insertId, name, email }, (err) => { // Change fullname to name
             if (err) return res.status(500).send("Login failed after signup.");
             res.redirect("/dashboard");
         });

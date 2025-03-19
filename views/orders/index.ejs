@@ -15,8 +15,19 @@
         <h2> View Orders</h2> <br>
         <!-- Alert message -->
 
+        <% if (successMessage) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <%= successMessage %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
 
-
+        <% if (errorMessage) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= errorMessage %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
 
         
         <table class="table table-bordered">
