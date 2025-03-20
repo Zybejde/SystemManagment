@@ -3,6 +3,8 @@ const db = require("../db");
 const router = express.Router();
 const authMiddleware = require("../src/middleware/authMiddleware");
 const flash = require("connect-flash");
+const bcrypt = require("bcryptjs");
+
 
 
 router.use(flash());
@@ -33,7 +35,7 @@ router.post("/products/add", authMiddleware, async (req, res) => {
         // Check if all fields are provided
         if (!name || !description || !price || !stock) {
             req.flash("error", "All fields are required.");
-            return res.redirect("/inventory/products/add"); // Redirect back to the form page
+            return res.redirect("/inventory/products/add"); 
         }
 
         // Insert the new product into the database
@@ -41,11 +43,11 @@ router.post("/products/add", authMiddleware, async (req, res) => {
 
         // Set the flash message and redirect to product list page
         req.flash("success", "Product added successfully!");
-        res.redirect("/inventory/products"); // Redirect after POST
+        res.redirect("/inventory/products"); 
     } catch (error) {
         console.error("Error adding product:", error);
         req.flash("error", "Something went wrong!");
-        res.redirect("/inventory/products/add"); // Redirect back to form page
+        res.redirect("/inventory/products/add"); 
     }
 });
 
@@ -93,7 +95,7 @@ router.post("/products/edit/:id", authMiddleware, async (req, res) => {
         );
 
         req.flash("success", "Product updated successfully!");
-        res.redirect("/inventory/products");  // Redirect to product list
+        res.redirect("/inventory/products");  
     } catch (error) {
         console.error("Error updating product:", error);
         req.flash("error", "Something went wrong!");
@@ -113,11 +115,11 @@ router.post("/products/delete/:id", authMiddleware, async (req, res) => {
 
         // Set success message and redirect
         req.flash("success", "Product deleted successfully!");
-        res.redirect("/inventory/products"); // Redirect to product list
+        res.redirect("/inventory/products"); 
     } catch (error) {
         console.error("Error deleting product:", error);
         req.flash("error", "Something went wrong!");
-        res.redirect("/inventory/products"); // Redirect to product list on error
+        res.redirect("/inventory/products"); 
     }
 });
 
@@ -137,7 +139,7 @@ router.get("/orders", authMiddleware, async (req, res) => {
             orders, 
             successMessage: req.flash("success")[0], 
             errorMessage: req.flash("error")[0] 
-        }); // Pass flash messages to the view
+        }); 
     } catch (error) {
         console.error("Error fetching orders:", error);
         res.status(500).send("Error fetching orders");
@@ -148,9 +150,9 @@ router.get("/orders", authMiddleware, async (req, res) => {
 // Add order
 router.get("/orders/add", authMiddleware, async (req, res) => {
     try {
-        const [products] = await db.query("SELECT * FROM products"); // Fetch products from the database
+        const [products] = await db.query("SELECT * FROM products"); 
         res.render("orders/add", {
-            products, // Pass the products to the view
+            products, 
             successMessage: req.flash("success")[0],
             errorMessage: req.flash("error")[0]
         });
@@ -168,7 +170,7 @@ router.post("/orders/add", authMiddleware, async (req, res) => {
         // Check if all fields are provided
         if (!customer_name || !product_id || !quantity) {
             req.flash("error", "All fields are required.");
-            return res.redirect("/inventory/orders/add"); // Redirect back to the form page
+            return res.redirect("/inventory/orders/add"); 
         }
 
         // Fetch the price of the selected product
@@ -183,11 +185,11 @@ router.post("/orders/add", authMiddleware, async (req, res) => {
 
         // Set the flash message and redirect to orders page
         req.flash("success", "Order added successfully!");
-        res.redirect("/inventory/orders"); // Redirect to orders list page after successful addition
+        res.redirect("/inventory/orders"); 
     } catch (error) {
         console.error("Error adding order:", error);
         req.flash("error", "Something went wrong!");
-        res.redirect("/inventory/orders/add"); // Redirect back to the form page
+        res.redirect("/inventory/orders/add"); 
     }
 });
 
@@ -200,7 +202,7 @@ router.post("/orders/delete/:id", authMiddleware, async (req, res) => {
         // Delete the order from the database
         await db.query("DELETE FROM orders WHERE id = ?", [orderId]);
 
-        // Redirect back to the orders page with a success message
+        
         req.flash("success", "Order deleted successfully!");
         res.redirect("/inventory/orders");
     } catch (error) {
@@ -270,43 +272,95 @@ router.post("/suppliers/delete/:id", authMiddleware, async (req, res) => {
     res.redirect("/inventory/suppliers");
 });
 
+//Settings pages
+// Route for Profile Settings Page
+router.get("/settings/profile", authMiddleware, (req, res) => {
+    const user = req.user; 
+    res.render("settings/profile", { user }); 
+});
 
-// Route for settings page
-router.get("/settings", authMiddleware, (req, res) => {
-    const user = req.user;  
-    
-    res.render("settings/index", { user, successMessage: req.flash("success")[0], errorMessage: req.flash("error")[0] });
+// Update Email
+router.post("/settings/update-email", authMiddleware, async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            req.flash("error", "Email is required.");
+            return res.redirect("/inventory/settings/profile");
+        }
+
+        await db.query("UPDATE users SET email = ? WHERE id = ?", [email, req.user.id]);
+
+        req.flash("success", "Email updated successfully!");
+        res.redirect("/inventory/settings/profile");
+    } catch (error) {
+        console.error("Error updating email:", error);
+        req.flash("error", "Something went wrong!");
+        res.redirect("/inventory/settings/profile");
+    }
+});
+
+// Update Name
+router.post("/settings/update-name", authMiddleware, async (req, res) => {
+    try {
+        const { name } = req.body;
+        if (!name) {
+            req.flash("error", "Name is required.");
+            return res.redirect("/inventory/settings/profile");
+        }
+
+        await db.query("UPDATE users SET name = ? WHERE id = ?", [name, req.user.id]);
+
+        req.flash("success", "Name updated successfully!");
+        res.redirect("/inventory/settings/profile");
+    } catch (error) {
+        console.error("Error updating name:", error);
+        req.flash("error", "Something went wrong!");
+        res.redirect("/inventory/settings/profile");
+    }
+});
+
+// Change Password
+router.post("/settings/change-password", authMiddleware, async (req, res) => {
+    const { password } = req.body;
+    try {
+        if (!password) {
+            req.flash("error", "Password is required.");
+            return res.redirect("/inventory/settings/profile");
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await db.query("UPDATE users SET password = ? WHERE id = ?", [hashedPassword, req.user.id]);
+
+        req.flash("success", "Password updated successfully!");
+        res.redirect("/inventory/settings/profile");
+    } catch (error) {
+        console.error("Error changing password:", error);
+        req.flash("error", "Something went wrong!");
+        res.redirect("/inventory/settings/profile");
+    }
+});
+
+// Profile Picture Update
+router.post("/settings/upload-profile-pic", authMiddleware, (req, res) => {
+    req.flash("success", "Profile picture updated successfully!");
+    res.redirect("/inventory/settings/profile");
 });
 
 
-router.post("/settings/update", authMiddleware, async (req, res) => {
-    try {
-        const { email, password } = req.body;
 
-        
-        if (!email) {
-            req.flash("error", "Email is required.");
-            return res.redirect("/inventory/settings");
-        }
 
-        
-        if (password) {
-         
-            const hashedPassword = await bcrypt.hash(password, 10);
-            // Update password and email
-            await db.query("UPDATE users SET email = ?, password = ? WHERE id = ?", [email, hashedPassword, req.user.id]);
-        } else {
-            // Just update email
-            await db.query("UPDATE users SET email = ? WHERE id = ?", [email, req.user.id]);
-        }
+// Route for Security Settings Page
+router.get("/settings/security", authMiddleware, (req, res) => {
+    const user = req.user; 
+    res.render("settings/security", { user }); 
+});
 
-        req.flash("success", "Settings updated successfully!");
-        res.redirect("/inventory/settings");
-    } catch (error) {
-        console.error("Error updating settings:", error);
-        req.flash("error", "Something went wrong!");
-        res.redirect("/inventory/settings");
-    }
+
+// Route for Preferences Settings Page
+router.get("/settings/preferences", authMiddleware, (req, res) => {
+    const user = req.user; 
+    res.render("settings/preferences", { user }); 
 });
 
 

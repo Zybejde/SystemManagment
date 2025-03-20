@@ -30,7 +30,7 @@
                     Products
                 </a>
                 <ul class="dropdown-menu bg-dark" aria-labelledby="productsDropdown">
-                    <li><a class="dropdown-item text-black" href="/inventory/products">View Products</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/products">View Products</a></li>
                     <li><a class="dropdown-item text-white" href="/inventory/products/add">Add Product</a></li>
                 </ul>
             </div>
@@ -57,8 +57,17 @@
                 </ul>
             </div>
 
-            <!-- Settings Link -->
-            <a href="/inventory/settings" class="nav-link text-white fs-4 mb-4">Settings</a>
+            <!-- Settings Dropdown -->
+            <div class="dropdown mb-4">
+                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="settingsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Settings
+                </a>
+                <ul class="dropdown-menu bg-dark" aria-labelledby="settingsDropdown">
+                    <li><a class="dropdown-item text-white" href="/inventory/settings/profile">User Profile</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/settings/security">Security Settings</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/settings/preferences">Preferences</a></li>
+                </ul>
+            </div>
 
             <!-- Reports Link -->
             <a href="/inventory/reports" class="nav-link text-white fs-4 mb-4">Reports</a>
