@@ -215,12 +215,12 @@ router.post("/orders/delete/:id", authMiddleware, async (req, res) => {
 
 // Route to render Add Supplier page
 router.get("/suppliers/add", authMiddleware, (req, res) => {
-    res.render("suppliers/add");
     res.render("suppliers/add", { 
         successMessage: req.flash("success")[0], 
         errorMessage: req.flash("error")[0] 
     });
 });
+
 
 //Add new supplier
 router.post("/suppliers/add", authMiddleware, async (req, res) => {
@@ -251,11 +251,11 @@ router.post("/suppliers/add", authMiddleware, async (req, res) => {
 
 
 
+
 // Route to view all suppliers
 router.get("/suppliers", authMiddleware, async (req, res) => {
     try {
         const [suppliers] = await db.query("SELECT * FROM suppliers");
-        res.render("suppliers/index", { suppliers });
         res.render("suppliers/index", { 
             suppliers, 
             successMessage: req.flash("success")[0], 
@@ -273,8 +273,6 @@ router.get("/suppliers", authMiddleware, async (req, res) => {
 // Delete a supplier
 router.post("/suppliers/delete/:id", authMiddleware, async (req, res) => {
     try {
-        const { id } = req.params;
-        await db.query("DELETE FROM suppliers WHERE id = ?", [id]);
         const supplierId = req.params.id;
 
         // Delete the supplier from the database
@@ -285,15 +283,17 @@ router.post("/suppliers/delete/:id", authMiddleware, async (req, res) => {
         res.redirect("/inventory/suppliers");
     } catch (error) {
         console.error("Error deleting supplier:", error);
-        req.flash("error", "Failed to delete supplier.");
         req.flash("error", "Something went wrong!");
         res.redirect("/inventory/suppliers");
     }
 });
 
+
+
+
 //Update supplier
- // Route to edit supplier
- router.get("/suppliers/edit/:id", authMiddleware, async (req, res) => {
+// Route to edit supplier
+router.get("/suppliers/edit/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;
     
     try {
@@ -315,10 +315,12 @@ router.post("/suppliers/delete/:id", authMiddleware, async (req, res) => {
         req.flash("error", "Something went wrong!");
         res.redirect("/suppliers");
     }
-    res.redirect("/inventory/suppliers");
 });
 
 
+
+
+// Handle supplier update
 // Handle supplier update
 router.post("/suppliers/edit/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;
@@ -345,8 +347,6 @@ router.post("/suppliers/edit/:id", authMiddleware, async (req, res) => {
         res.redirect(`/inventory/suppliers/edit/${id}`);  // Stay on the edit page if error
     }
 });
-
-
 
 //Settings pages
 // Route for Profile Settings Page
