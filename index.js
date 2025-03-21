@@ -100,11 +100,7 @@ app.get("/signup", (req, res) => {
 
 // Handle signup form submission
 app.post("/signup", async (req, res) => {
-<<<<<<< HEAD
     const { name, email, password } = req.body; // Change from fullname to name
-=======
-    const { name, email, password } = req.body;
->>>>>>> 0054871 (Login page styles)
 
     try {
         // Check if the user already exists
@@ -114,20 +110,12 @@ app.post("/signup", async (req, res) => {
         // Hash password and store user
         const hashedPassword = await bcrypt.hash(password, 10);
         const [result] = await db.query(
-<<<<<<< HEAD
             "INSERT INTO users (name, email, password) VALUES (?, ?, ?)", // Change fullname to name
-=======
-            "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
->>>>>>> 0054871 (Login page styles)
             [name, email, hashedPassword]
         );
 
         // Log the user in immediately after signup
-<<<<<<< HEAD
         req.login({ id: result.insertId, name, email }, (err) => { // Change fullname to name
-=======
-        req.login({ id: result.insertId, name, email }, (err) => {
->>>>>>> 0054871 (Login page styles)
             if (err) return res.status(500).send("Login failed after signup.");
             res.redirect("/dashboard");
         });
