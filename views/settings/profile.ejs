@@ -14,6 +14,22 @@
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
                 <h2 class="text-center mb-5">User Profile Settings</h2>
+                <!-- Alert message -->
+                <% if (successMessage) { %>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <%= successMessage %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <% } %>
+                
+                <% if (errorMessage) { %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <%= errorMessage %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <% } %>
+                
+                
 
                 <!-- Email update form -->
                 <form action="/inventory/settings/update-email" method="POST">
@@ -32,24 +48,33 @@
                     </div>
                     <button type="submit" class="btn btn-success w-100 py-2">Update Name</button>
                 </form>
-                
+                <br><br>
                 <!-- Password change form -->
-                <form action="/inventory/settings/change-password" method="POST" class="mt-4">
-                    <div class="mb-4">
-                        <label for="password" class="form-label fs-5">New Password:</label>
-                        <input type="password" id="password" name="password" class="form-control p-3" required>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Change Password</h5>
                     </div>
-                    <button type="submit" class="btn btn-warning w-100 py-2">Change Password</button>
-                </form>
+                    <div class="card-body">
+                        <form action="/inventory/settings/change-password" method="POST">
+                            <div class="mb-3">
+                                <label for="current-password" class="form-label">Current Password</label>
+                                <input type="password" name="current-password" id="current-password" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="new-password" class="form-label">New Password</label>
+                                <input type="password" name="new-password" id="new-password" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirm-password" class="form-label">Confirm New Password</label>
+                                <input type="password" name="confirm-password" id="confirm-password" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-warning w-100 py-2">Change Password</button>
+                        </form>
+                    </div>
+                </div>
                 
                 <!-- Profile picture upload form -->
-                <form action="/inventory/settings/upload-profile-pic" method="POST" enctype="multipart/form-data" class="mt-4">
-                    <div class="mb-4">
-                        <label for="profile_pic" class="form-label fs-5">Upload Profile Picture:</label>
-                        <input type="file" id="profile_pic" name="profile_pic" class="form-control p-3" accept="image/*">
-                    </div>
-                    <button type="submit" class="btn btn-info w-100 py-2">Upload Picture</button>
-                </form>
+                
             </div>
         </div>
     </div>

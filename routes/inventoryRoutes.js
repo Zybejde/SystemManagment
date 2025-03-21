@@ -351,8 +351,11 @@ router.post("/suppliers/edit/:id", authMiddleware, async (req, res) => {
 //Settings pages
 // Route for Profile Settings Page
 router.get("/settings/profile", authMiddleware, (req, res) => {
-    const user = req.user; 
-    res.render("settings/profile", { user }); 
+    res.render("settings/profile", {
+        user: req.user, // Ensure user data is passed
+        successMessage: req.flash('success')[0], // Get the first success message
+        errorMessage: req.flash('error')[0]      // Get the first error message
+    });
 });
 
 // Update Email
@@ -374,6 +377,7 @@ router.post("/settings/update-email", authMiddleware, async (req, res) => {
         res.redirect("/inventory/settings/profile");
     }
 });
+
 
 // Update Name
 router.post("/settings/update-name", authMiddleware, async (req, res) => {
@@ -397,15 +401,36 @@ router.post("/settings/update-name", authMiddleware, async (req, res) => {
 
 // Change Password
 router.post("/settings/change-password", authMiddleware, async (req, res) => {
-    const { password } = req.body;
+    const { "current-password": currentPassword, "new-password": newPassword, "confirm-password": confirmPassword } = req.body;
+
     try {
-        if (!password) {
-            req.flash("error", "Password is required.");
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            req.flash("error", "All fields are required.");
             return res.redirect("/inventory/settings/profile");
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        if (newPassword !== confirmPassword) {
+            req.flash("error", "New password and confirmation do not match.");
+            return res.redirect("/inventory/settings/profile");
+        }
 
+        // Retrieve the user's current password from the database
+        const [user] = await db.query("SELECT password FROM users WHERE id = ?", [req.user.id]);
+
+        if (!user || user.length === 0) {
+            req.flash("error", "User not found.");
+            return res.redirect("/inventory/settings/profile");
+        }
+
+        // Verify the current password
+        const passwordMatch = await bcrypt.compare(currentPassword, user[0].password);
+        if (!passwordMatch) {
+            req.flash("error", "Current password is incorrect.");
+            return res.redirect("/inventory/settings/profile");
+        }
+
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
         await db.query("UPDATE users SET password = ? WHERE id = ?", [hashedPassword, req.user.id]);
 
         req.flash("success", "Password updated successfully!");
@@ -416,6 +441,7 @@ router.post("/settings/change-password", authMiddleware, async (req, res) => {
         res.redirect("/inventory/settings/profile");
     }
 });
+
 
 // Profile Picture Update
 router.post("/settings/upload-profile-pic", authMiddleware, (req, res) => {
