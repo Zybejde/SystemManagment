@@ -13,6 +13,19 @@
     <!-- Supplier container -->
     <div class="container mt-5">
         <h2>Supplier List</h2><br>
+        <% if (successMessage) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <%= successMessage %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
+        
+        <% if (errorMessage) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= errorMessage %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
         <table class="table table-bordered">
             <thead>
                 <!-- Supplier table -->
@@ -32,12 +45,15 @@
                         <td><%= supplier.email %></td>
                         <td><%= supplier.address %></td>
                         <td>
-                            <!-- Delete button -->
-                            <form action="/inventory/suppliers/delete/<%= supplier.id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this supplier?');">
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            <!-- Update button -->
+                            <a href="/inventory/suppliers/edit/<%= supplier.id %>" class="btn btn-warning btn-sm">Update</a>
+                            <!-- Delete form -->
+                            <form action="/inventory/suppliers/delete/<%= supplier.id %>" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this supplier?')">
+                                    Delete
+                                </button>
                             </form>
                         </td>
-                        
                     </tr>
                 <% }); %>
             </tbody>
