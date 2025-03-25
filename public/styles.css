@@ -29,6 +29,23 @@ h3{
     text-align: center;
 }
 
+/* Logout Button Styling */
+.logout-btn {
+    padding: 600px 70px; 
+    font-size: 1.5rem; 
+    border: none; 
+    border-radius: 5px; 
+    color: white;
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    transition: background-color 0.3s ease; 
+    text-decoration: none;
+}
 
-
+/* Icon styling inside the button */
+.logout-btn i {
+    margin-right: 10px; /* Space between the icon and the text */
+    font-size: 20px; /* Set icon size */
+}
 
