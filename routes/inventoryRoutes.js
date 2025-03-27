@@ -493,44 +493,30 @@ router.get("/profile", authMiddleware, async (req, res) => {
 // Reports Route
 router.get('/reports', async (req, res) => {
     try {
-        // Count the total number of orders
         const [orderRows] = await db.execute("SELECT COUNT(*) AS total_orders FROM orders");
-        
-        // Count the total number of users
-        const [userRows] = await db.execute("SELECT COUNT(*) AS total_users FROM users");
-        
-        // Count the total number of suppliers
         const [supplierRows] = await db.execute("SELECT COUNT(*) AS total_suppliers FROM suppliers");
-        
-        // Count the total number of products
         const [productRows] = await db.execute("SELECT COUNT(*) AS total_products FROM products");
 
-        // Create a salesData object with all counts
+        // Prepare salesData object
         const salesData = {
             total_orders: orderRows[0].total_orders || 0,
-            total_users: userRows[0].total_users || 0,
             total_suppliers: supplierRows[0].total_suppliers || 0,
             total_products: productRows[0].total_products || 0
         };
 
-        // Pass the salesData to the EJS template
+        console.log("Sales Data:", salesData); // Debugging
         res.render('reports/index', { salesData });
     } catch (error) {
         console.error("Error fetching data:", error);
         res.render('reports/index', {
             salesData: {
                 total_orders: 0,
-                total_users: 0,
                 total_suppliers: 0,
                 total_products: 0
             }
         });
     }
 });
-
-
-
-
 
 
 module.exports = router;

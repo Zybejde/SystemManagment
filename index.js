@@ -11,6 +11,7 @@ const inventoryRoutes = require("./routes/inventoryRoutes");
 const authMiddleware = require("./src/middleware/authMiddleware");
 const { name } = require("ejs");
 
+
 const app = express();
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
@@ -29,7 +30,7 @@ app.use(session({
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use("/inventory", inventoryRoutes);
+app.use("/inventory", inventoryRoutes);//Use the router
 
 // Passport Local Strategy (Email/Password)
 passport.use(

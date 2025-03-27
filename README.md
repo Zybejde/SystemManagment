@@ -10,7 +10,7 @@ Supplier Management: Maintain supplier records.
 User Profile: View profile and log out (updates handled in settings page).
 
 
-Reports: Generate reports for analysis. (Not yet implemented)
+Reports: Generate reports for analysis. (Implemented)
 Dashboard:viewing the reports on the first page(Not yet implemented)
 Alert-messages of success: for orders supplier pages.(Implemented)
 Styling the pages with bootstrap or css.(Not yet implemented)
