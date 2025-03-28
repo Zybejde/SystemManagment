@@ -10,10 +10,11 @@ const db = require("./db"); // MySQL Database Connection
 const inventoryRoutes = require("./routes/inventoryRoutes");
 const authMiddleware = require("./src/middleware/authMiddleware");
 const { name } = require("ejs");
-
+const path = require('path');  // <-- Add this line
 
 const app = express();
 app.set("views", __dirname + "/views");
+app.use(express.static(path.join(__dirname, 'public')));  // <-- Path for static files
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); 
@@ -25,7 +26,6 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
-
 
 app.use(flash());
 app.use(passport.initialize());
@@ -88,9 +88,7 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-
 // Routes
-
 // Render the login page
 app.get("/", (req, res) => res.render("login"));
 

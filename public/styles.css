@@ -30,22 +30,18 @@ h3{
 }
 
 /* Logout Button Styling */
-.logout-btn {
-    padding: 600px 70px; 
-    font-size: 1.5rem; 
-    border: none; 
-    border-radius: 5px; 
+.log-button {
     color: white;
-    display: inline-flex; 
-    align-items: center; 
-    justify-content: center; 
-    transition: background-color 0.3s ease; 
+    font-size: 23px;
     text-decoration: none;
+    padding-top: 400px;
+    
+   
+  
 }
 
-/* Icon styling inside the button */
-.logout-btn i {
-    margin-right: 10px; /* Space between the icon and the text */
-    font-size: 20px; /* Set icon size */
+.dropdown-item:hover {
+    background-color: var(--bs-dark-bg-subtle) !important;
+    color: var(--bs-body-color) !important; /* Kjo siguron që teksti të jetë i lexueshëm */
 }
 
