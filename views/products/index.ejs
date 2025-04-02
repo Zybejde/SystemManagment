@@ -6,58 +6,138 @@
     <title>View Products</title>
     <!-- Bootstrap styles -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <!-- Importing CSS -->
-     <link rel="stylesheet" href="/public/styles.css">
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <div class="container mt-5">
-        <h2>Product List</h2>
-<!-- Alert messages -->
-        <% if (successMessage) { %>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <%= successMessage %>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-dark-subtle">
+        <div class="container-fluid d-flex justify-content-between w-100 p-3">
+            <a class="navbar-brand text-black ps-2 pe-2" href="#">Inventory Management System | Product's List</a>
+        </div>
+    </nav>
+
+    <!-- Main Content and Sidebar -->
+    <div class="d-flex">
+        <!-- Sidebar (Fixed position) -->
+        <div class="sidebar position-fixed bg-secondary text-white p-4" style="width: 340px; height: 100vh;">
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 80px; height: 80px;">
+                    <img src="/image/inv5.png" alt="Welcome, Admin!" width="80" height="80" class="rounded-circle"> 
+                </div>
+                <h5 class="text-center mt-2">Welcome, Admin!</h5> 
             </div>
-        <% } %>
-        
-        <% if (errorMessage) { %>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <%= errorMessage %>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+            <!-- Sidebar Menu -->
+            <div class="dropdown mb-5">
+                <a class="nav-link text-white dropdown-toggle fs-4 mt-5 " href="#" role="button" id="productsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-box me-2"></i> Products
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="productsDropdown">
+                    <li><a class="dropdown-item text-white bg-dark-subtle-hover" href="/inventory/products">View Products</a></li>
+                    <li><a class="dropdown-item text-white bg-dark-subtle-hover" href="/inventory/products/add">Add Product</a></li>
+                </ul>
             </div>
-        <% } %>
-        
-        <!-- Products table -->
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% products.forEach(product => { %>
-                    <tr>
-                        <td><%= product.name %></td>
-                        <td><%= product.description %></td>
-                        <td><%= product.price %></td>
-                        <td><%= product.stock %></td>
-                        <td>
-                            <!-- Delete or Update buttons  -->
-                            <a href="/inventory/products/edit/<%= product.id %>" class="btn btn-warning btn-sm">Update</a>
-                            <form action="/inventory/products/delete/<%= product.id %>" method="POST" class="d-inline">
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this product?')">
-                                    Delete
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                <% }); %>
-            </tbody>
-        </table>
+            <div class="dropdown mb-5">
+                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="ordersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-receipt me-2"></i> Orders
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="ordersDropdown">
+                    <li><a class="dropdown-item text-white" href="/inventory/orders">View Orders</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/orders/add">Add Order</a></li>
+                </ul>
+            </div>
+            <div class="dropdown mb-5">
+                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="suppliersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-truck me-2"></i> Suppliers
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="suppliersDropdown">
+                    <li><a class="dropdown-item text-white" href="/inventory/suppliers">View Suppliers</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/suppliers/add">Add Supplier</a></li>
+                </ul>
+            </div>
+            <div class="dropdown mb-5">
+                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="settingsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-gear me-2"></i> Settings
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="settingsDropdown">
+                    <li><a class="dropdown-item text-white" href="/inventory/settings/profile">User Profile</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/settings/security">Security Settings</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/settings/preferences">Preferences</a></li>
+                </ul>
+            </div>
+
+            <a href="/inventory/reports" class="nav-link text-white fs-4 mb-5">
+                <i class="bi bi-graph-up me-2"></i> Reports</a>
+
+            <a href="/inventory/profile" class="nav-link text-white fs-4 mb-5">
+                <i class="bi bi-person-circle me-2"></i> Profile</a>
+
+            <a href="/logout" class="log-button"><i class="fa-solid fa-power-off me-2"></i> Logout</a>
+        </div>
+
+        <!-- Content Area (Table area) -->
+        <div class="content ms-340 w-100" style="overflow-x: auto; overflow-y: auto;">
+            <div class="container py-5">
+                <center><h2>Product List</h2></center>
+                <br>
+                <!-- Alert messages -->
+                <% if (successMessage) { %>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <%= successMessage %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <% } %>
+
+                <% if (errorMessage) { %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <%= errorMessage %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <% } %>
+
+                <!-- Products table -->
+                <div class="table-responsive" style="max-height: 80vh;">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% products.forEach(product => { %>
+                                <tr>
+                                    <td><%= product.name %></td>
+                                    <td><%= product.description %></td>
+                                    <td><%= product.price %></td>
+                                    <td><%= product.stock %></td>
+                                    <td>
+                                        <!-- Delete or Update buttons -->
+                                        <a href="/inventory/products/edit/<%= product.id %>" class="btn btn-warning btn-sm">Update</a>
+                                        <form action="/inventory/products/delete/<%= product.id %>" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this product?')">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

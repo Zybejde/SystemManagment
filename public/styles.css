@@ -29,6 +29,19 @@ h3{
     text-align: center;
 }
 
+/* Logout Button Styling */
+.log-button {
+    color: white;
+    font-size: 23px;
+    text-decoration: none;
+    padding-top: 400px;
+    
+   
+  
+}
 
-
+.dropdown-item:hover {
+    background-color: var(--bs-dark-bg-subtle) !important;
+    color: var(--bs-body-color) !important; /* Kjo siguron që teksti të jetë i lexueshëm */
+}
 
