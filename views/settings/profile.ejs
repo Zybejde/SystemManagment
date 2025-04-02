@@ -74,6 +74,19 @@
                 </div>
                 
                 <!-- Profile picture upload form -->
+                 <!-- Profile Picture Upload Form -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Change Profile Picture</h5>
+    </div>
+    <div class="card-body">
+        <form action="/inventory/settings/upload-profile-pic" method="POST" enctype="multipart/form-data">
+            <input type="file" name="profilePic" accept="image/*">
+            <button type="submit">Upload Picture</button>
+        </form>
+        
+</div>
+
                 
             </div>
         </div>

@@ -4,7 +4,34 @@ const router = express.Router();
 const authMiddleware = require("../src/middleware/authMiddleware");
 const flash = require("connect-flash");
 const bcrypt = require("bcryptjs");
+const multer = require("multer");
+const path = require("path");
+// Set up the storage configuration for multer
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "uploads/"); // Store images in the 'uploads' folder
+    },
+    filename: (req, file, cb) => {
+      // Create a unique filename for the uploaded image
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
+      cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
+    }
+  });
+  
+  const upload = multer({ 
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = /jpeg|jpg|png/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
 
+        if (extname && mimetype) {
+            return cb(null, true);
+        } else {
+            cb(new Error("Only images are allowed."));
+        }
+    }
+});
 
 
 router.use(flash());
@@ -443,11 +470,31 @@ router.post("/settings/change-password", authMiddleware, async (req, res) => {
 });
 
 
-// Profile Picture Update
-router.post("/settings/upload-profile-pic", authMiddleware, (req, res) => {
-    req.flash("success", "Profile picture updated successfully!");
-    res.redirect("/inventory/settings/profile");
+// Profile Picture Update Route
+router.post("/settings/upload-profile-pic", authMiddleware, upload.single('profilePic'), async (req, res) => {
+    try {
+        // If no file was uploaded
+        if (!req.file) {
+            req.flash("error", "Please upload a valid image.");
+            return res.redirect("/inventory/settings/profile");
+        }
+
+        // Get the file path
+        const profilePicPath = `/uploads/${req.file.filename}`;
+
+        // Update the user's profile picture in the database
+        await db.query("UPDATE users SET profile_pic = ? WHERE id = ?", [profilePicPath, req.user.id]);
+
+        req.flash("success", "Profile picture updated successfully!");
+        res.redirect("/inventory/settings/profile");
+    } catch (error) {
+        console.error("Error updating profile picture:", error);
+        req.flash("error", "Something went wrong while updating your profile picture.");
+        res.redirect("/inventory/settings/profile");
+    }
 });
+
+
 
 
 

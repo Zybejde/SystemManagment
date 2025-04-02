@@ -17,6 +17,8 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); 
 app.use(express.static('public')); // To serve static files (CSS, JS, images)
+const path = require("path");
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Express Session
 app.use(session({
