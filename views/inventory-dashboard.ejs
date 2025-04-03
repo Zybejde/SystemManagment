@@ -21,15 +21,25 @@
         </div>
     </nav>
 
+
+           
+
+
+
     <!-- Main Content and Sidebar -->
     <div class="d-flex flex-grow-1" style="width: 100vw;">
         <!-- <img src="/public/dashboard-banner.jpg" alt="Dashboard Banner" class="img-fluid w-100 mb-4"> -->
 
-        <div class="d-flex flex-column flex-shrink-0 bg-secondary bg-gradient text-white p-4"  style="width: 340px; height: 100vh; position: fixed;">
-           
-            <div class="d-flex flex-column justify-content-center align-items-center">
-                <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 80px; height: 80px;">
-                    <img src="/image/inv5.png" alt="Welcome, Admin!" width="80" height="80" class="rounded-circle"> 
+        <div class="d-flex flex-column flex-shrink-0 bg-secondary bg-gradient text-white p-4" style="width: 300px; height: 100vh;">
+            <!-- Products dropdown -->
+            <div class="dropdown mb-4">
+                <div class="d-flex justify-content-center">
+                    <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 80px; height: 80px;">
+                        <!-- Check if the user has uploaded a profile picture -->
+                        <img src="<%= user.profile_pic ? user.profile_pic : '/image/default-profile.png' %>" alt="Welcome, Admin!" width="80" height="80" class="rounded-circle">
+                    </div>
+                    
+                   
                 </div>
                 <h5 class="text-center mt-2">Welcome, Admin!</h5> 
             </div>
@@ -96,11 +106,19 @@
                 <a href="/logout" class="log-button" > <i class="fa-solid fa-power-off me-2"></i> Logout</a>
         </div>
 
-        <!-- Main Content Area -->
-        <div class="flex-grow-1 p-5  ms-6" style="margin-left: 300px; width: calc(100% - 300px);">
-            <center> <h1><strong>Welcome to the Inventory Dashboard!</strong></h1></center>
+        
+        </div>
 
-            <p>Select an option from the sidebar to manage inventory.</p>
+
+
+
+
+
+
+
+
+
+            
         </div>
     </div>
 
