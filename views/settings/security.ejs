@@ -3,38 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security Settings</title>
+    <title>Security </title>
     <!-- Bootstrap styles -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
     <!-- Importing custom CSS -->
-    <link rel="stylesheet" href="/public/styles.css">
+    <link rel="stylesheet" href="/styles.css">
 </head>
-<body>
+<body class="d-flex flex-column" style="min-height: 100vh;"> 
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-dark-subtle position-fixed w-100" style="top: 0; z-index: 1000;">
+        <div class="container-fluid d-flex justify-content-between w-100 p-3">
+            <a class="navbar-brand text-black ps-2 pe-2" href="#">Inventory Management System | Security Settings</a>
+        </div>
+    </nav>
+
+    <!-- Main Content and Sidebar -->
+    <div class="d-flex flex-grow-1" style="width: 100vw; margin-top: 70px;">
+        
+        <!-- Sidebar (Fixed) -->
+        <div class="d-flex flex-column flex-shrink-0 bg-secondary bg-gradient text-white p-4 mt-3" style="width: 340px; height: 100vh; position: fixed;">
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 80px; height: 80px;">
+                    <img src="/image/inv5.png" alt="Welcome, Admin!" width="80" height="80" class="rounded-circle"> 
+                </div>
+                <h5 class="text-center mt-2">Welcome, Admin!</h5> 
+            </div>
+
+            <!-- Product dropdown -->
+            <div class="dropdown mb-5">
+                <a class="nav-link text-white dropdown-toggle fs-4 mt-5 " href="#" role="button" id="productsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-box me-2"></i>  Products
+                </a>
+                
+    
+                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="productsDropdown">
+                    <li><a class="dropdown-item text-white bg-dark-subtle-hover" href="/inventory/products">View Products</a></li>
+                    <li><a class="dropdown-item text-white bg-dark-subtle-hover" href="/inventory/products/add">Add Product</a></li>
+                </ul>
+            </div>
+
+            <!-- Orders dropdown -->
+            <div class="dropdown mb-5">
+                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="ordersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-receipt me-2"></i> Orders
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="ordersDropdown">
+                    <li><a class="dropdown-item text-white" href="/inventory/orders">View Orders</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/orders/add">Add Order</a></li>
+                </ul>
+            </div>
+
+            <!-- Suppliers Dropdown -->
+            <div class="dropdown mb-5">
+                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="suppliersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-truck me-2"></i> Suppliers
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="suppliersDropdown">
+                    <li><a class="dropdown-item text-white" href="/inventory/suppliers">View Suppliers</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/suppliers/add">Add Supplier</a></li>
+                </ul>
+            </div>
+
+            <!-- Settings Dropdown -->
+            <div class="dropdown mb-5">
+        
+                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="settingsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-gear me-2"></i> Settings
+                </a>
+                
+                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="settingsDropdown">
+                    <li><a class="dropdown-item text-white" href="/inventory/settings/profile">User Profile</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/settings/security">Security Settings</a></li>
+                    <li><a class="dropdown-item text-white" href="/inventory/settings/preferences">Preferences</a></li>
+                </ul>
+            </div>
+
+            <!-- Reports Link -->
+            <a href="/inventory/reports" class="nav-link text-white fs-4 mb-5">
+                <i class="bi bi-graph-up me-2"></i> Reports</a>
+
+            <!-- Profile Link -->
+            <a href="/inventory/profile" class="nav-link text-white fs-4 mb-5">
+                <i class="bi bi-person-circle me-2"></i> Profile</a>
+
+                <a href="/logout" class="log-button" > <i class="fa-solid fa-power-off me-2"></i> Logout</a>
+        </div>
+        <!-- Main Content Area -->
+        <div class="flex-grow-1 p-5 ms-6" style="margin-left: 340px; width: calc(100% - 340px); overflow-y: auto;">
+
     <!-- Security Settings container -->
     <div class="container mt-5">
-        <h2>Security Settings</h2>
+        <h2 class="text-center fw-bold">Security Settings</h2>
         <br>
 
         <!-- Change Password Form -->
         <div class="card mb-4">
             <div class="card-header">
-                <h5>Change Password</h5>
+                <h5 class="fw-bold">Change Password</h5>
             </div>
             <div class="card-body">
                 <form action="/inventory/settings/update-password" method="POST">
                     <div class="mb-3">
-                        <label for="current-password" class="form-label">Current Password</label>
+                        <label for="current-password" class="form-label fw-bold">Current Password</label>
                         <input type="password" name="current-password" id="current-password" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="new-password" class="form-label">New Password</label>
+                        <label for="new-password" class="form-label fw-bold">New Password</label>
                         <input type="password" name="new-password" id="new-password" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="confirm-password" class="form-label">Confirm New Password</label>
+                        <label for="confirm-password" class="form-label fw-bold">Confirm New Password</label>
                         <input type="password" name="confirm-password" id="confirm-password" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Change Password</button>
+                    <button type="submit" class="btn btn-primary fw-bold">Change Password</button>
                 </form>
             </div>
         </div>
@@ -42,12 +127,12 @@
         <!-- Enable/Disable Two-Factor Authentication (2FA) -->
         <div class="card mb-4">
             <div class="card-header">
-                <h5>Two-Factor Authentication</h5>
+                <h5 class="fw-bold">Two-Factor Authentication</h5>
             </div>
             <div class="card-body">
                 <p>Enable Two-Factor Authentication for added security on your account.</p>
                 <form action="/inventory/settings/toggle-2fa" method="POST">
-                    <button type="submit" class="btn btn-warning">
+                    <button type="submit" class="btn btn-warning fw-bold">
                         <%= user.twoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA' %>
                     </button>
                 </form>
@@ -57,7 +142,7 @@
         <!-- Security Logs Section -->
         <div class="card mb-4">
             <div class="card-header">
-                <h5>Security Logs</h5>
+                <h5 class="fw-bold">Security Logs</h5>
             </div>
             <div class="card-body">
                 <p>View recent login attempts and security events:</p>
@@ -68,12 +153,12 @@
         <!-- Log Out All Devices -->
         <div class="card mb-4">
             <div class="card-header">
-                <h5>Logout From All Devices</h5>
+                <h5 class="fw-bold">Logout From All Devices</h5>
             </div>
             <div class="card-body">
                 <p>If you suspect unauthorized access to your account, you can log out of all devices.</p>
                 <form action="/inventory/settings/logout-all" method="POST">
-                    <button type="submit" class="btn btn-danger">Logout From All Devices</button>
+                    <button type="submit" class="btn btn-danger fw-bold">Logout From All Devices</button>
                 </form>
             </div>
         </div>
@@ -81,16 +166,16 @@
         <!-- Session Management (Auto logout) -->
         <div class="card mb-4">
             <div class="card-header">
-                <h5>Session Management</h5>
+                <h5 class="fw-bold">Session Management</h5>
             </div>
             <div class="card-body">
                 <p>Manage your session timeout settings for automatic logout after inactivity.</p>
                 <form action="/inventory/settings/update-session-timeout" method="POST">
                     <div class="mb-3">
-                        <label for="session-timeout" class="form-label">Session Timeout (in minutes)</label>
+                        <label for="session-timeout" class="form-label fw-bold">Session Timeout (in minutes)</label>
                         <input type="number" name="session-timeout" id="session-timeout" class="form-control" value="<%= user.sessionTimeout || 30 %>" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Update Session Timeout</button>
+                    <button type="submit" class="btn btn-primary fw-bold">Update Session Timeout</button>
                 </form>
             </div>
         </div>
@@ -99,5 +184,6 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
 </body>
 </html>
