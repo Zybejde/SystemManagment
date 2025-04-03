@@ -5,7 +5,7 @@ const authMiddleware = require("../src/middleware/authMiddleware");
 const flash = require("connect-flash");
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
-const path = require("path");
+
 // Set up the storage configuration for multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
