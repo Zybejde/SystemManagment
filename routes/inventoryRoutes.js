@@ -498,7 +498,6 @@ router.post("/settings/upload-profile-pic", authMiddleware, upload.single('profi
 
 
 
-
 // Route for Security Settings Page
 router.get("/settings/security", authMiddleware, (req, res) => {
     const user = req.user; 
