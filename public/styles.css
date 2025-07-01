@@ -1,35 +1,42 @@
-.background-img {
-    background-image: url('/public/image/inv2.jpg');
+
+.blur-background {
+    background-image: url('/image/inv2.jpg');
     background-size: cover;
     background-position: center;
+    filter: blur(4px);
+    z-index: 0;
 }
 
 .logo-container{
-    display: flex;
-    align-items: center; /* Vendos imazhin dhe tekstin në të njëjtën vijë */
-    justify-content: center; /* Qendroni të dy elementët */
-    background-color: rgb(252, 252, 252); /* Sfond i bardhë */
-    padding: 10px; /* Hapësirë rreth elementeve */
+ display: flex;
+  align-items: center; 
+  padding: 10px; 
 }
 
 .logo {
     background-color: red;
-    width: 50px; /* Vendos një madhësi më të vogël për logon */
-    height: auto; /* Ruaj raportin e aspektit */
-    filter: invert(1);  /*Bën imazhin të duket i zi në sfond të bardhë */
-    margin-right: 10px; /* Hapësirë mes logos dhe titullit */
+    width: 50px; 
+    height: auto; 
+    filter: invert(1);  
+    margin-right: 10px; 
 }
 
 h3{
     color: black;
     font-family: Arial, sans-serif; /* Ndryshon fontin */
-    font-weight: bold; /* E bën tekstin më të trashë */
-    font-size: 35px; /* Madhësia e tekstit */
+    font-weight: bold; 
+    font-size: 30px;
     text-shadow:  2px 2px 4px rgba(0, 0, 0, 0.5);
     text-align: center;
 }
+.no-text-shadow {
+  text-shadow: none !important;
+}
 
-/* Logout Button Styling */
+
+
+
+/* Logout Button  */
 .log-button {
     color: white;
     font-size: 23px;
@@ -43,5 +50,57 @@ h3{
 .dropdown-item:hover {
     background-color: var(--bs-dark-bg-subtle) !important;
     color: var(--bs-body-color) !important; /* Kjo siguron që teksti të jetë i lexueshëm */
+}
+
+/* Sidebar styles */
+.sidebar {
+    background: #18191a;
+    min-width: 250px;
+    max-width: 250px;
+    color: #fff;
+    min-height: 100vh;
+}
+.sidebar .nav-link {
+    color: #b0b3b8;
+    border-radius: 6px;
+    margin-bottom: 6px;
+}
+.sidebar .nav-link.active, .sidebar .nav-link:hover {
+    background: #e74c3c;
+    color: #fff;
+}
+.sidebar .nav-link i {
+    font-size: 1.2rem;
+}
+
+/* Navbar styles */
+.navbar {
+    background: #fff !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.navbar .navbar-brand {
+    color: #18191a !important;
+    font-weight: 600;
+}
+.navbar .logout-link {
+    color: #e74c3c !important;
+    font-weight: 500;
+}
+
+/* Main content styles */
+body {
+    background: #f5f6fa;
+}
+.main-content {
+    background: #f5f6fa;
+    flex: 1;
+    padding: 2rem;
+}
+.card-box {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
 }
 

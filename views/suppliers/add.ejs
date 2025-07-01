@@ -12,116 +12,44 @@
       <!-- Importing CSS -->
       <link rel="stylesheet" href="/styles.css">
 </head>
-<body class="d-flex flex-column" style="min-height: 100vh;"> 
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-dark-subtle position-fixed w-100" style="top: 0; z-index: 1000;">
-        <div class="container-fluid d-flex justify-content-between w-100 p-3">
-            <a class="navbar-brand text-black ps-2 pe-2" href="#">Inventory Management System | Adding Products</a>
+<body>
+           
+    <div class="container-fluid px-4 py-4">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1 fw-bold">Add Supplier</h2>
+                <p class="text-muted">Add a new supplier to your system</p>
+            </div>
+            <a href="/inventory/suppliers" class="btn btn-outline-secondary fw-bold">
+                <i class="bi bi-arrow-left me-2 "></i>Back to Suppliers
+            </a>
         </div>
-    </nav>
-
-    <!-- Main Content and Sidebar -->
-    <div class="d-flex flex-grow-1" style="width: 100vw; margin-top: 70px;">
-        
-        <!-- Sidebar (Fixed) -->
-        <div class="d-flex flex-column flex-shrink-0 bg-secondary bg-gradient text-white p-4 mt-3" style="width: 340px; height: 100vh; position: fixed;">
-            <div class="d-flex flex-column justify-content-center align-items-center">
-                <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 80px; height: 80px;">
-                    <img src="/image/inv5.png" alt="Welcome, Admin!" width="80" height="80" class="rounded-circle"> 
-                </div>
-                <h5 class="text-center mt-2">Welcome, Admin!</h5> 
+        <div class="card">
+            <div class="card-body">
+                <form action="/inventory/suppliers/add" method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label fw-bold">Supplier Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter Supplier Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contact" class="form-label fw-bold">Contact</label>
+                        <input type="text" class="form-control" id="contact" name="contact" placeholder="Enter contact" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-bold">Email</label>
+                        <input type="email" class="form-control" id="email" name="email"placeholder="Enter email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label fw-bold">Address</label>
+                        <textarea class="form-control" id="address" name="address" placeholder="Enter address" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary fw-bold">Add Supplier</button>
+                </form>
             </div>
-
-            <!-- Product dropdown -->
-            <div class="dropdown mb-5">
-                <a class="nav-link text-white dropdown-toggle fs-4 mt-5 " href="#" role="button" id="productsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-box me-2"></i>  Products
-                </a>
-                
-    
-                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="productsDropdown">
-                    <li><a class="dropdown-item text-white bg-dark-subtle-hover" href="/inventory/products">View Products</a></li>
-                    <li><a class="dropdown-item text-white bg-dark-subtle-hover" href="/inventory/products/add">Add Product</a></li>
-                </ul>
-            </div>
-
-            <!-- Orders dropdown -->
-            <div class="dropdown mb-5">
-                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="ordersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-receipt me-2"></i> Orders
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="ordersDropdown">
-                    <li><a class="dropdown-item text-white" href="/inventory/orders">View Orders</a></li>
-                    <li><a class="dropdown-item text-white" href="/inventory/orders/add">Add Order</a></li>
-                </ul>
-            </div>
-
-            <!-- Suppliers Dropdown -->
-            <div class="dropdown mb-5">
-                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="suppliersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-truck me-2"></i> Suppliers
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="suppliersDropdown">
-                    <li><a class="dropdown-item text-white" href="/inventory/suppliers">View Suppliers</a></li>
-                    <li><a class="dropdown-item text-white" href="/inventory/suppliers/add">Add Supplier</a></li>
-                </ul>
-            </div>
-
-            <!-- Settings Dropdown -->
-            <div class="dropdown mb-5">
-        
-                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="settingsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-gear me-2"></i> Settings
-                </a>
-                
-                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="settingsDropdown">
-                    <li><a class="dropdown-item text-white" href="/inventory/settings/profile">User Profile</a></li>
-                    <li><a class="dropdown-item text-white" href="/inventory/settings/security">Security Settings</a></li>
-                    <li><a class="dropdown-item text-white" href="/inventory/settings/preferences">Preferences</a></li>
-                </ul>
-            </div>
-
-            <!-- Reports Link -->
-            <a href="/inventory/reports" class="nav-link text-white fs-4 mb-5">
-                <i class="bi bi-graph-up me-2"></i> Reports</a>
-
-            <!-- Profile Link -->
-            <a href="/inventory/profile" class="nav-link text-white fs-4 mb-5">
-                <i class="bi bi-person-circle me-2"></i> Profile</a>
-
-                <a href="/logout" class="log-button" > <i class="fa-solid fa-power-off me-2"></i> Logout</a>
         </div>
-        <!-- Main Content Area -->
-        <div class="flex-grow-1 p-5 ms-6" style="margin-left: 340px; width: calc(100% - 340px); overflow-y: auto;">
-
-    <!-- Supplier container -->
-    <div class="container mt-5">
-        <h2>Add New Supplier</h2><br>
-        <!-- Add supplier form -->
-        <form action="/inventory/suppliers/add" method="POST">
-            <div class="mb-3">
-                <label for="name" class="form-label">Supplier Name</label>
-                <input type="text" class="form-control" id="name" name="name" required>
-            </div>
-            <div class="mb-3">
-                <label for="contact" class="form-label">Contact</label>
-                <input type="text" class="form-control" id="contact" name="contact" required>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <div class="mb-3">
-                <label for="address" class="form-label">Address</label>
-                <textarea class="form-control" id="address" name="address" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Add Supplier</button>
-        </form>
     </div>
 
-     <!-- Bootstrap JS and Popper.js -->
-     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    
 </body>
 </html>

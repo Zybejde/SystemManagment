@@ -1,129 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory Dashboard</title>
-      <!-- Bootstrap styles -->
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    
-     <!-- Importing CSS -->
-     <link rel="stylesheet" href="/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4cc9f0;
+            --warning-color: #f72585;
+            --info-color: #4895ef;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .dashboard-card {
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .dashboard-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .dashboard-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .dashboard-label {
+            font-size: 1rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .trend-indicator {
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .trend-up {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .trend-down {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .low-stock-item {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 193, 7, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .low-stock-item:hover {
+            background: rgba(255, 193, 7, 0.2);
+            transform: translateX(5px);
+        }
+
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 300px;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-action-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .inventory-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .inventory-item {
+            padding: 1rem;
+            border-left: 3px solid var(--primary-color);
+            margin-bottom: 1rem;
+            background: white;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .stock-level {
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .stock-good {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .stock-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .stock-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+    </style>
 </head>
-<body class="d-flex flex-column" style="min-height: 100vh;"> 
+<body>
+    <div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="dashboard-title">Inventory Dashboard</h2>
+    <div class="quick-actions">
+      <a href="/inventory/products/add" class="btn btn-primary quick-action-btn">
+        <i class="bi bi-plus-circle me-2"></i>Add Product
+      </a>
+      <a href="/inventory/suppliers/add" class="btn btn-success quick-action-btn">
+        <i class="bi bi-truck me-2"></i>Add Supplier
+      </a>
+      <a href="/inventory/reports" class="btn btn-info quick-action-btn">
+        <i class="bi bi-file-earmark-text me-2"></i>Generate Report
+      </a>
+    </div>
+  </div>
+</div>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-dark-subtle">
-        <div class="container-fluid d-flex justify-content-between w-100 p-3">
-            <a class="navbar-brand text-black ps-2 pe-2" href="#">Inventory Managment system | Admin's portal </a>
-        </div>
-    </nav>
 
-
-           
-
-
-
-    <!-- Main Content and Sidebar -->
-    <div class="d-flex flex-grow-1" style="width: 100vw;">
-        <!-- <img src="/public/dashboard-banner.jpg" alt="Dashboard Banner" class="img-fluid w-100 mb-4"> -->
-
-        <div class="d-flex flex-column flex-shrink-0 bg-secondary bg-gradient text-white p-4" style="width: 300px; height: 100vh;">
-            <!-- Products dropdown -->
-            <div class="dropdown mb-4">
-                <div class="d-flex justify-content-center">
-                    <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 80px; height: 80px;">
-                        <!-- Check if the user has uploaded a profile picture -->
-                        <img src="<%= user.profile_pic ? user.profile_pic : '/image/default-profile.png' %>" alt="Welcome, Admin!" width="80" height="80" class="rounded-circle">
+        <!-- Summary Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="dashboard-card p-4">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="dashboard-label">Total Products</div>
+                            <div class="dashboard-value"><%= dashboardData.total_products %></div>
+                        </div>
+                        <i class="bi bi-box dashboard-icon"></i>
                     </div>
-                    
-                   
                 </div>
-                <h5 class="text-center mt-2">Welcome, Admin!</h5> 
             </div>
-            
-            
-            
-<!-- Product dropdown -->
-                <div class="dropdown mb-5">
-                <a class="nav-link text-white dropdown-toggle fs-4 mt-5 " href="#" role="button" id="productsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-box me-2"></i>  Products
-                </a>
-                
-    
-                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="productsDropdown">
-                    <li><a class="dropdown-item text-white bg-dark-subtle-hover" href="/inventory/products">View Products</a></li>
-                    <li><a class="dropdown-item text-white bg-dark-subtle-hover" href="/inventory/products/add">Add Product</a></li>
-                </ul>
+            <div class="col-md-3">
+                <div class="dashboard-card p-4">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="dashboard-label">Total Suppliers</div>
+                            <div class="dashboard-value"><%= dashboardData.total_suppliers %></div>
+                        </div>
+                        <i class="bi bi-people dashboard-icon"></i>
+                    </div>
+                </div>
             </div>
-
-            <!-- Orders dropdown -->
-            <div class="dropdown mb-5">
-                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="ordersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-receipt me-2"></i> Orders
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="ordersDropdown">
-                    <li><a class="dropdown-item text-white" href="/inventory/orders">View Orders</a></li>
-                    <li><a class="dropdown-item text-white" href="/inventory/orders/add">Add Order</a></li>
-                </ul>
+            <div class="col-md-3">
+                <div class="dashboard-card p-4">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="dashboard-label">Low Stock Items</div>
+                            <div class="dashboard-value"><%= dashboardData.lowStockProducts.length %></div>
+                        </div>
+                        <i class="bi bi-exclamation-triangle dashboard-icon"></i>
+                    </div>
+                </div>
             </div>
-
-            <!-- Suppliers Dropdown -->
-            <div class="dropdown mb-5">
-                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="suppliersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-truck me-2"></i> Suppliers
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="suppliersDropdown">
-                    <li><a class="dropdown-item text-white" href="/inventory/suppliers">View Suppliers</a></li>
-                    <li><a class="dropdown-item text-white" href="/inventory/suppliers/add">Add Supplier</a></li>
-                </ul>
+            <div class="col-md-3">
+                <div class="dashboard-card p-4">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="dashboard-label">Total Categories</div>
+                            <div class="dashboard-value"><%= dashboardData.categoryDistribution.length %></div>
+                        </div>
+                        <i class="bi bi-tags dashboard-icon"></i>
+                    </div>
+                </div>
             </div>
-
-            <!-- Settings Dropdown -->
-            <div class="dropdown mb-5">
-        
-                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="settingsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-gear me-2"></i> Settings
-                </a>
-                
-                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="settingsDropdown">
-                    <li><a class="dropdown-item text-white" href="/inventory/settings/profile">User Profile</a></li>
-                    <li><a class="dropdown-item text-white" href="/inventory/settings/security">Security Settings</a></li>
-                    <li><a class="dropdown-item text-white" href="/inventory/settings/preferences">Preferences</a></li>
-                </ul>
-            </div>
-
-            <!-- Reports Link -->
-            <a href="/inventory/reports" class="nav-link text-white fs-4 mb-5">
-                <i class="bi bi-graph-up me-2"></i> Reports</a>
-
-            <!-- Profile Link -->
-            <a href="/inventory/profile" class="nav-link text-white fs-4 mb-5">
-                <i class="bi bi-person-circle me-2"></i> Profile</a>
-
-                <a href="/logout" class="log-button" > <i class="fa-solid fa-power-off me-2"></i> Logout</a>
         </div>
 
-        
-        </div>
+        <!-- Charts and Tables -->
+        <div class="row g-4">
+            <!-- Category Distribution Chart -->
+            <div class="col-md-6">
+                <div class="dashboard-card p-4">
+                    <h5 class="card-title mb-4">Category Distribution</h5>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Stock Level Distribution -->
+            <div class="col-md-6">
+                <div class="dashboard-card p-4">
+                    <h5 class="card-title mb-4">Stock Level Distribution</h5>
+                    <div class="chart-container">
+                        <canvas id="stockLevelChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
-
-
-
-
-
-
-
-
-            
+          
         </div>
     </div>
 
-    <!-- Bootstrap JS and Popper.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Category Distribution Chart
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: <%- JSON.stringify(dashboardData.categoryDistribution.map(c => c.category)) %>,
+                    datasets: [{
+                        data: <%- JSON.stringify(dashboardData.categoryDistribution.map(c => c.count)) %>,
+                        backgroundColor: [
+                            '#4361ee',
+                            '#3f37c9',
+                            '#4cc9f0',
+                            '#4895ef',
+                            '#f72585'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+
+            // Stock Level Distribution Chart
+            const stockLevelCtx = document.getElementById('stockLevelChart').getContext('2d');
+            const stockLevels = {
+                good: <%= dashboardData.lowStockProducts.filter(p => p.stock >= 10).length %>,
+                low: <%= dashboardData.lowStockProducts.filter(p => p.stock < 10 && p.stock >= 5).length %>,
+                critical: <%= dashboardData.lowStockProducts.filter(p => p.stock < 5).length %>
+            };
+
+            new Chart(stockLevelCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Good', 'Low', 'Critical'],
+                    datasets: [{
+                        label: 'Number of Products',
+                        data: [stockLevels.good, stockLevels.low, stockLevels.critical],
+                        backgroundColor: [
+                            '#28a745',
+                            '#ffc107',
+                            '#dc3545'
+                        ],
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

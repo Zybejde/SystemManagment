@@ -1,214 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inventory Reports</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
 
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <style>
+    .inventory-section {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      margin-bottom: 2rem;
+    }
 
-     <!-- Importing CSS -->
-     <link rel="stylesheet" href="/styles.css">
+    .inventory-list {
+      max-height: 350px;
+      overflow-y: auto;
+    }
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    .inventory-item, .low-stock-item {
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      background: #f8f9fa;
+      border-left: 4px solid #0d6efd;
+      transition: background-color 0.3s ease;
+    }
+
+    .inventory-item:hover, .low-stock-item:hover {
+      background-color: #e9f4ff;
+    }
+
+    .stock-level {
+      padding: 0.25rem 0.5rem;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .stock-good {
+      background-color: #28a745;
+    }
+
+    .stock-warning {
+      background-color: #ffc107;
+      color: #212529;
+    }
+
+    .stock-danger {
+      background-color: #dc3545;
+    }
+  </style>
 </head>
-<body class="d-flex flex-column" style="min-height: 100vh;"> 
+<body>
+  <div class="container py-4">
+    <div class="row">
+      <!-- Low Stock Items -->
+      <div class="col-md-6">
+        <div class="inventory-section">
+          <h5 class="mb-4 text-primary fw-bold">
+            <i class="bi bi-exclamation-circle me-2 "></i>Low Stock Items
+          </h5>
+          <div class="inventory-list">
+            <% dashboardData.lowStockProducts.forEach(product => { %>
+              <div class="low-stock-item">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-1"><%= product.name %></h6>
+                    <small class="text-muted">
+                      Current Stock: <%= product.stock %> |
+                      Price: ₹<%= product.price %> |
+                      Supplier: <%= product.supplier_name || 'Unknown' %>
+                    </small>
+                  </div>
+                  <!-- Restock button toggles form -->
+                  <button 
+                    class="btn btn-sm btn-warning" 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#restockForm-<%= product.id %>" 
+                    aria-expanded="false" 
+                    aria-controls="restockForm-<%= product.id %>">
+                    Restock
+                  </button>
+                </div>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-dark-subtle position-fixed w-100" style="top: 0; z-index: 1000;">
-        <div class="container-fluid d-flex justify-content-between w-100 p-3">
-            <a class="navbar-brand text-black ps-2 pe-2" href="#">Inventory Management System | Reports</a>
+                <!-- Collapsible restock form -->
+                <div class="collapse mt-3" id="restockForm-<%= product.id %>">
+                  <form action="/inventory/restock" method="POST">
+                    <input type="hidden" name="product_id" value="<%= product.id %>">
+                    <div class="input-group">
+                      <input 
+                        type="number" 
+                        name="restock_quantity" 
+                        class="form-control" 
+                        min="1" 
+                        placeholder="Quantity to add" 
+                        required
+                      >
+                      <button type="submit" class="btn btn-success fw-bold">Add</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            <% }); %>
+          </div>
         </div>
-    </nav>
+      </div>
 
-    <!-- Main Content and Sidebar -->
-    <div class="d-flex flex-grow-1" style="width: 100vw; margin-top: 70px;">
-        
-        <!-- Sidebar (Fixed) -->
-        <div class="d-flex flex-column flex-shrink-0 bg-secondary bg-gradient text-white p-4 mt-3" style="width: 340px; height: 100vh; position: fixed;">
-            <div class="d-flex flex-column justify-content-center align-items-center">
-                <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 80px; height: 80px;">
-                    <img src="/image/inv5.png" alt="Welcome, Admin!" width="80" height="80" class="rounded-circle"> 
-                </div>
-                <h5 class="text-center mt-2">Welcome, Admin!</h5> 
-            </div>
-
-            <!-- Product dropdown -->
-            <div class="dropdown mb-5">
-                <a class="nav-link text-white dropdown-toggle fs-4 mt-5 " href="#" role="button" id="productsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-box me-2"></i>  Products
-                </a>
-                
-    
-                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="productsDropdown">
-                    <li><a class="dropdown-item text-white bg-dark-subtle-hover" href="/inventory/products">View Products</a></li>
-                    <li><a class="dropdown-item text-white bg-dark-subtle-hover" href="/inventory/products/add">Add Product</a></li>
-                </ul>
-            </div>
-
-            <!-- Orders dropdown -->
-            <div class="dropdown mb-5">
-                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="ordersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-receipt me-2"></i> Orders
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="ordersDropdown">
-                    <li><a class="dropdown-item text-white" href="/inventory/orders">View Orders</a></li>
-                    <li><a class="dropdown-item text-white" href="/inventory/orders/add">Add Order</a></li>
-                </ul>
-            </div>
-
-            <!-- Suppliers Dropdown -->
-            <div class="dropdown mb-5">
-                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="suppliersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-truck me-2"></i> Suppliers
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="suppliersDropdown">
-                    <li><a class="dropdown-item text-white" href="/inventory/suppliers">View Suppliers</a></li>
-                    <li><a class="dropdown-item text-white" href="/inventory/suppliers/add">Add Supplier</a></li>
-                </ul>
-            </div>
-
-            <!-- Settings Dropdown -->
-            <div class="dropdown mb-5">
-        
-                <a class="nav-link text-white dropdown-toggle fs-4" href="#" role="button" id="settingsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-gear me-2"></i> Settings
-                </a>
-                
-                <ul class="dropdown-menu dropdown-menu-end bg-secondary bg-gradient" aria-labelledby="settingsDropdown">
-                    <li><a class="dropdown-item text-white" href="/inventory/settings/profile">User Profile</a></li>
-                    <li><a class="dropdown-item text-white" href="/inventory/settings/security">Security Settings</a></li>
-                    <li><a class="dropdown-item text-white" href="/inventory/settings/preferences">Preferences</a></li>
-                </ul>
-            </div>
-
-            <!-- Reports Link -->
-            <a href="/inventory/reports" class="nav-link text-white fs-4 mb-5">
-                <i class="bi bi-graph-up me-2"></i> Reports</a>
-
-            <!-- Profile Link -->
-            <a href="/inventory/profile" class="nav-link text-white fs-4 mb-5">
-                <i class="bi bi-person-circle me-2"></i> Profile</a>
-
-                <a href="/logout" class="log-button" > <i class="fa-solid fa-power-off me-2"></i> Logout</a>
-        </div>
-        <!-- Main Content Area -->
-        <div class="flex-grow-1 p-5 ms-6" style="margin-left: 340px; width: calc(100% - 340px); overflow-y: auto;">
-
-    <!-- Reports container -->
-    <div class="container mt-5">
-        <h2 class="text-center fw-bold mb-4"> Overview Reports</h2>
-
-        <div class="row justify-content-center">
-            <% if (salesData) { %>
-                <!-- Total Orders Card -->
-                <div class="col-md-3 mb-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header text-center bg-primary text-white">
-                            Total Orders
-                        </div>
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-primary"><%= salesData.total_orders %></h5>
-                        </div>
+      <!-- Recent Inventory Updates -->
+      <div class="col-md-6">
+        <div class="inventory-section">
+          <h5 class="mb-4 text-info fw-bold">
+            <i class="bi bi-clock-history me-2"></i>Recent Inventory Updates
+          </h5>
+          <div class="inventory-list">
+            <% if (dashboardData.recentUpdates && dashboardData.recentUpdates.length > 0) { %>
+              <% dashboardData.recentUpdates.forEach(product => { %>
+                <div class="inventory-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-1"><%= product.name %></h6>
+                      <small class="text-muted">
+                        Last Updated: <%= new Date(product.created_at).toLocaleDateString() %> |
+                        Stock Level: 
+                        <span class="stock-level <%= product.stock < 5 ? 'stock-danger' : (product.stock < 10 ? 'stock-warning' : 'stock-good') %>">
+                          <%= product.stock < 5 ? 'Critical' : (product.stock < 10 ? 'Low' : 'Good') %>
+                        </span>
+                      </small>
                     </div>
+                    <button class="btn btn-sm btn-outline-primary">View</button>
+                  </div>
                 </div>
-
-                <!-- Total Suppliers Card -->
-                <div class="col-md-3 mb-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header text-center bg-primary text-white">
-                            Total Suppliers
-                        </div>
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-primary"><%= salesData.total_suppliers %></h5>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Products Card -->
-                <div class="col-md-3 mb-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header text-center bg-primary text-white">
-                            Total Products
-                        </div>
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-primary"><%= salesData.total_products %></h5>
-                        </div>
-                    </div>
-                </div>
+              <% }); %>
             <% } else { %>
-                <div class="col-12">
-                    <div class="alert alert-warning text-center">
-                        <strong>No data available for the selected report.</strong>
-                    </div>
-                </div>
+              <div class="text-center text-muted py-4">
+                <i class="bi bi-inbox fs-1"></i>
+                <p class="mt-2">No recent updates</p>
+              </div>
             <% } %>
+          </div>
         </div>
+      </div>
     </div>
-    <br>
+  </div>
 
-    <!-- Add a canvas for the chart -->
-    <div class="container">
-        <canvas id="salesChart" width="400" height="200"></canvas>
-    </div>
-
-    
-   <script id="salesDataScript" type="application/json">
-  <%- JSON.stringify(salesData || {}) %>
-</script>
-
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const salesDataElement = document.getElementById("salesDataScript");
-            let salesData = {};
-
-        
-            try {
-                salesData = JSON.parse(salesDataElement.textContent);
-            } catch (error) {
-                console.error("Error parsing salesData:", error);
-            }
-
-            console.log("Sales Data:", salesData); 
-
-          
-            if (salesData.total_orders !== undefined) {
-                const ctx = document.getElementById('salesChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Orders', 'Suppliers', 'Products'],
-                        datasets: [{
-                            label: 'Sales Data',
-                            data: [
-                                salesData.total_orders || 0,
-                                salesData.total_suppliers || 0,
-                                salesData.total_products || 0
-                            ],
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: { beginAtZero: true }
-                        }
-                    }
-                });
-            } else {
-                console.error("salesData is missing or invalid.");
-            }
-        });
-    </script>
-     <!-- Bootstrap JS and Popper.js -->
-     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-
+  <!-- Bootstrap JS Bundle (includes Popper for collapse) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

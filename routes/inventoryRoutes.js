@@ -33,13 +33,17 @@ const storage = multer.diskStorage({
     }
 });
 
-
-router.use(flash());
+// Set a default title for all inventory pages
+router.use((req, res, next) => {
+    res.locals.title = "Inventory Management";
+    next();
+});
 
 // View products
 router.get("/products", authMiddleware, async (req, res) => {
     const [products] = await db.query("SELECT * FROM products");
     res.render("products/index", { 
+        title: "Products",
         products, 
         successMessage: req.flash("success")[0], 
         errorMessage: req.flash("error")[0]  
@@ -47,8 +51,11 @@ router.get("/products", authMiddleware, async (req, res) => {
 });
 
 // Render add product page
-router.get("/products/add", authMiddleware, (req, res) => {
-    res.render("products/add", { 
+router.get("/products/add", authMiddleware, async (req, res) => {
+    const [suppliers] = await db.query("SELECT id, name FROM suppliers");
+    res.render("products/add", {
+        title: "Add Product",
+        suppliers,
         successMessage: req.flash("success")[0],
         errorMessage: req.flash("error")[0]
     });
@@ -57,24 +64,36 @@ router.get("/products/add", authMiddleware, (req, res) => {
 // Add a new product
 router.post("/products/add", authMiddleware, async (req, res) => {
     try {
-        const { name, description, price, stock } = req.body;
+        const { name, description, price, stock, category, supplier_id } = req.body;
 
         // Check if all fields are provided
-        if (!name || !description || !price || !stock) {
-            req.flash("error", "All fields are required.");
-            return res.redirect("/inventory/products/add"); 
+        if (!name || !description || !price || !stock || !category || !supplier_id) {
+            const [suppliers] = await db.query("SELECT id, name FROM suppliers");
+            return res.render("products/add", {
+                title: "Add Product",
+                suppliers,
+                successMessage: null,
+                errorMessage: "All fields are required."
+            });
         }
 
         // Insert the new product into the database
-        await db.query("INSERT INTO products (name, description, price, stock) VALUES (?, ?, ?, ?)", [name, description, price, stock]);
+        await db.query(
+            "INSERT INTO products (name, description, price, stock, category, supplier_id) VALUES (?, ?, ?, ?, ?, ?)",
+            [name, description, price, stock, category, supplier_id]
+        );
 
-        // Set the flash message and redirect to product list page
         req.flash("success", "Product added successfully!");
-        res.redirect("/inventory/products"); 
+        res.redirect("/inventory/products");
     } catch (error) {
         console.error("Error adding product:", error);
-        req.flash("error", "Something went wrong!");
-        res.redirect("/inventory/products/add"); 
+        const [suppliers] = await db.query("SELECT id, name FROM suppliers");
+        res.render("products/add", {
+            title: "Add Product",
+            suppliers,
+            successMessage: null,
+            errorMessage: "Something went wrong!"
+        });
     }
 });
 
@@ -93,8 +112,8 @@ router.get("/products/edit/:id", authMiddleware, async (req, res) => {
 
         res.render("products/edit", { 
             product: rows[0],  
-            successMessage: req.flash("success"), 
-            errorMessage: req.flash("error") 
+            successMessage: req.flash("success")[0] || null, 
+            errorMessage: req.flash("error")[0] || null
         });
     } catch (error) {
         console.error("Error fetching product:", error);
@@ -106,19 +125,19 @@ router.get("/products/edit/:id", authMiddleware, async (req, res) => {
 // Handle product update
 router.post("/products/edit/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;
-    const { name, description, price, stock } = req.body;
+    const { name, description, price, stock, category } = req.body;
 
     try {
         // Ensure all fields are filled
-        if (!name || !description || !price || !stock) {
+        if (!name || !description || !price || !stock || !category) {
             req.flash("error", "All fields are required.");
             return res.redirect(`/inventory/products/edit/${id}`);
         }
 
         // Update the product
         await db.query(
-            "UPDATE products SET name = ?, description = ?, price = ?, stock = ? WHERE id = ?",
-            [name, description, price, stock, id]
+            "UPDATE products SET name = ?, description = ?, price = ?, stock = ?, category = ? WHERE id = ?",
+            [name, description, price, stock, category, id]
         );
 
         req.flash("success", "Product updated successfully!");
@@ -138,7 +157,9 @@ router.post("/products/delete/:id", authMiddleware, async (req, res) => {
 
     try {
         // Delete the product from the database
+        await db.query("DELETE FROM restock_logs WHERE product_id = ?", [id]);
         await db.query("DELETE FROM products WHERE id = ?", [id]);
+
 
         // Set success message and redirect
         req.flash("success", "Product deleted successfully!");
@@ -151,98 +172,41 @@ router.post("/products/delete/:id", authMiddleware, async (req, res) => {
 });
 
 
+// View sales dashboard page
+ router.get("/sales", authMiddleware, async (req, res) => {
+//     try {
+//         // Fetch total sales
+//         const [totalSalesResult] = await db.query("SELECT SUM(total_price) AS total_sales FROM sales");
+//         const totalSales = totalSalesResult[0].total_sales || 0;
 
-// View orders page
-router.get("/orders", authMiddleware, async (req, res) => {
-    try {
-        const [orders] = await db.query(`
-            SELECT orders.id, orders.customer_name, orders.quantity, orders.total_price, 
-                   orders.status, orders.created_at, products.name AS product_name
-            FROM orders
-            JOIN products ON orders.product_id = products.id
-        `);
-        
-        res.render("orders/index", { 
-            orders, 
-            successMessage: req.flash("success")[0], 
-            errorMessage: req.flash("error")[0] 
-        }); 
-    } catch (error) {
-        console.error("Error fetching orders:", error);
-        res.status(500).send("Error fetching orders");
-    }
-});
+//         // Fetch items sold
+//         const [itemsSoldResult] = await db.query("SELECT SUM(quantity) AS items_sold FROM sales");
+//         const itemsSold = itemsSoldResult[0].items_sold || 0;
 
+//         // Fetch all sales with product name
+//         const [salesList] = await db.query(`
+//             SELECT s.id, s.product_id, p.name AS product_name, s.quantity, s.total_price, s.created_at
+//             FROM sales s
+//             JOIN products p ON s.product_id = p.id
+//             ORDER BY s.created_at DESC
+//         `);
 
-// Add order
-router.get("/orders/add", authMiddleware, async (req, res) => {
-    try {
-        const [products] = await db.query("SELECT * FROM products"); 
-        res.render("orders/add", {
-            products, 
-            successMessage: req.flash("success")[0],
-            errorMessage: req.flash("error")[0]
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Error fetching products");
-    }
-});
-
-// Add a new order
-router.post("/orders/add", authMiddleware, async (req, res) => {
-    try {
-        const { customer_name, product_id, quantity } = req.body;
-
-        // Check if all fields are provided
-        if (!customer_name || !product_id || !quantity) {
-            req.flash("error", "All fields are required.");
-            return res.redirect("/inventory/orders/add"); 
-        }
-
-        // Fetch the price of the selected product
-        const [product] = await db.query("SELECT price FROM products WHERE id = ?", [product_id]);
-        const totalPrice = product[0].price * quantity;
-
-        // Insert the new order into the database
-        await db.query(
-            "INSERT INTO orders (customer_name, product_id, quantity, total_price) VALUES (?, ?, ?, ?)",
-            [customer_name, product_id, quantity, totalPrice]
-        );
-
-        // Set the flash message and redirect to orders page
-        req.flash("success", "Order added successfully!");
-        res.redirect("/inventory/orders"); 
-    } catch (error) {
-        console.error("Error adding order:", error);
-        req.flash("error", "Something went wrong!");
-        res.redirect("/inventory/orders/add"); 
-    }
-});
-
-
-// Delete order
-router.post("/orders/delete/:id", authMiddleware, async (req, res) => {
-    try {
-        const orderId = req.params.id;
-
-        // Delete the order from the database
-        await db.query("DELETE FROM orders WHERE id = ?", [orderId]);
-
-        
-        req.flash("success", "Order deleted successfully!");
-        res.redirect("/inventory/orders");
-    } catch (error) {
-        console.error("Error deleting order:", error);
-        req.flash("error", "Something went wrong!");
-        res.redirect("/inventory/orders");
-    }
-});
-
+//         res.render("sales/index", { 
+//             title: "Sales",
+//             totalSales,
+//             itemsSold,
+//             salesList
+//         });
+//     } catch (error) {
+//         console.error("Error fetching sales data:", error);
+//         res.status(500).send("Error fetching sales data");
+//     }
+ });
 
 // Route to render Add Supplier page
 router.get("/suppliers/add", authMiddleware, (req, res) => {
     res.render("suppliers/add", { 
+        title: "Add Supplier",
         successMessage: req.flash("success")[0], 
         errorMessage: req.flash("error")[0] 
     });
@@ -284,6 +248,7 @@ router.get("/suppliers", authMiddleware, async (req, res) => {
     try {
         const [suppliers] = await db.query("SELECT * FROM suppliers");
         res.render("suppliers/index", { 
+            title: "Suppliers",
             suppliers, 
             successMessage: req.flash("success")[0], 
             errorMessage: req.flash("error")[0] 
@@ -537,32 +502,93 @@ router.get("/profile", authMiddleware, async (req, res) => {
 
 
 // Reports Route
-router.get('/reports', async (req, res) => {
-    try {
-        const [orderRows] = await db.execute("SELECT COUNT(*) AS total_orders FROM orders");
-        const [supplierRows] = await db.execute("SELECT COUNT(*) AS total_suppliers FROM suppliers");
-        const [productRows] = await db.execute("SELECT COUNT(*) AS total_products FROM products");
-
-        // Prepare salesData object
-        const salesData = {
-            total_orders: orderRows[0].total_orders || 0,
-            total_suppliers: supplierRows[0].total_suppliers || 0,
-            total_products: productRows[0].total_products || 0
-        };
-
-        console.log("Sales Data:", salesData); // Debugging
-        res.render('reports/index', { salesData });
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        res.render('reports/index', {
-            salesData: {
-                total_orders: 0,
-                total_suppliers: 0,
-                total_products: 0
-            }
-        });
-    }
+router.get("/restock", authMiddleware, async (req, res) => {
+  try {
+    const [products] = await db.query("SELECT id, name FROM products ORDER BY name ASC");
+    res.render("restock", { user: req.user, products });
+  } catch (error) {
+    console.error("Error loading products for restock:", error);
+    res.render("restock", { user: req.user, products: [] });
+  }
 });
 
+router.post('/restock', authMiddleware, async (req, res) => {
+  const { product_id, restock_quantity } = req.body;
+
+  try {
+    // 1. Shto sasinë në stok
+    await db.query(
+      'UPDATE products SET stock = stock + ? WHERE id = ?',
+      [restock_quantity, product_id]
+    );
+
+  await db.query(
+  'INSERT INTO restock_logs (product_id, quantity, restocked_by) VALUES (?, ?, ?)',
+  [product_id, restock_quantity, req.user.name] // ose req.user.email
+);
+
+    console.log('Product restocked seccesfully.');
+    res.redirect('/inventory/products'); // Ose ndonjë tjetër faqe pas suksesit
+  } catch (error) {
+    console.error('Error restocking product:', error);
+    res.status(500).send('Server error while restocking product');
+  }
+});
+
+
+
+// in inventoryRoutes.js or wherever your reports route is
+// Reports Route
+router.get("/reports", authMiddleware, async (req, res) => {
+  try {
+    const [lowStockProducts] = await db.query(`
+      SELECT p.id, p.name, p.stock, p.price, s.name AS supplier_name, p.created_at
+      FROM products p
+      LEFT JOIN suppliers s ON p.supplier_id = s.id
+      WHERE p.stock < 10
+      ORDER BY p.stock ASC
+    `);
+
+    const [recentUpdates] = await db.query(`
+      SELECT p.id, p.name, p.stock, p.created_at
+      FROM products p
+      ORDER BY p.created_at DESC
+      LIMIT 10
+    `);
+
+    const [products] = await db.query(`
+      SELECT id, name FROM products ORDER BY name
+    `);
+
+    res.render("reports/index", {
+      user: req.user,
+      dashboardData: { lowStockProducts, recentUpdates },
+      products,
+    });
+
+  } catch (error) {
+    console.error("Error loading reports page:", error);
+    res.render("reports/index", {
+      user: req.user,
+      dashboardData: { lowStockProducts: [], recentUpdates: [] },
+      products: [],
+      error: "Failed to load report data"
+    });
+  }
+});
+
+
+
+// Middleware to count how many products are low in stock
+// router.use(async (req, res, next) => {
+//   try {
+//     const [rows] = await db.query("SELECT COUNT(*) AS count FROM products WHERE stock < 10");
+//     res.locals.lowStockCount = rows[0].count || 0;
+//   } catch (error) {
+//     console.error("Error fetching low stock count:", error);
+//     res.locals.lowStockCount = 0;
+//   }
+//   next();
+// });
 
 module.exports = router;
